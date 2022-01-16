@@ -1,0 +1,16 @@
+{
+  "name": "wp-rest-types",
+  "version": "0.0.1",
+  "description": "Typings for the WordPress REST API",
+  "main": "dist/index.js",
+  "author": "dkress59 <28515387+dkress59@users.noreply.github.com>",
+  "license": "MIT",
+  "packageManager": "yarn@3.1.1",
+  "dependencies": {
+    "quicktype": "15.0.260",
+    "quicktype-core": "^6.0.70"
+  },
+  "scripts": {
+    "update:specs": "quicktype --src http://localhost:8080/wp-json/wp/v2/ --src-lang json --lang typescript --top-level WpREST --out WpRest.ts"
+  }
+}
