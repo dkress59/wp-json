@@ -41,6 +41,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prettier", "npm:2.4.3"],
             ["@typescript-eslint/eslint-plugin", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.9.1"],
             ["@typescript-eslint/parser", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.9.1"],
+            ["cross-fetch", "npm:3.1.4"],
             ["eslint", "npm:8.7.0"],
             ["eslint-config-prettier", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:8.3.0"],
             ["eslint-import-resolver-typescript", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:2.5.0"],
@@ -54,6 +55,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-unused-imports", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:2.0.0"],
             ["json-to-ts", "npm:1.7.0"],
             ["lodash", "npm:4.17.21"],
+            ["node-fetch", "npm:3.1.1"],
             ["nodemon", "npm:2.0.15"],
             ["prettier", "npm:2.5.1"],
             ["quicktype", "npm:15.0.260"],
@@ -1627,6 +1629,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["cross-fetch", [
+        ["npm:3.1.4", {
+          "packageLocation": "./.yarn/cache/cross-fetch-npm-3.1.4-45e4517cba-2107e5e633.zip/node_modules/cross-fetch/",
+          "packageDependencies": [
+            ["cross-fetch", "npm:3.1.4"],
+            ["node-fetch", "npm:2.6.1"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["cross-spawn", [
         ["npm:6.0.5", {
           "packageLocation": "./.yarn/cache/cross-spawn-npm-6.0.5-2deab6c280-f893bb0d96.zip/node_modules/cross-spawn/",
@@ -1665,6 +1677,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/damerau-levenshtein-npm-1.0.8-bda7311c69-d240b77575.zip/node_modules/damerau-levenshtein/",
           "packageDependencies": [
             ["damerau-levenshtein", "npm:1.0.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["data-uri-to-buffer", [
+        ["npm:4.0.0", {
+          "packageLocation": "./.yarn/cache/data-uri-to-buffer-npm-4.0.0-e7a49f58f7-a010653869.zip/node_modules/data-uri-to-buffer/",
+          "packageDependencies": [
+            ["data-uri-to-buffer", "npm:4.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -2898,6 +2919,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["fetch-blob", [
+        ["npm:3.1.3", {
+          "packageLocation": "./.yarn/cache/fetch-blob-npm-3.1.3-c2869e8ea5-7be20e9c9a.zip/node_modules/fetch-blob/",
+          "packageDependencies": [
+            ["fetch-blob", "npm:3.1.3"],
+            ["web-streams-polyfill", "npm:3.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["file-entry-cache", [
         ["npm:6.0.1", {
           "packageLocation": "./.yarn/cache/file-entry-cache-npm-6.0.1-31965cf0af-f49701feaa.zip/node_modules/file-entry-cache/",
@@ -2972,6 +3003,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/foreach-npm-2.0.5-9fbfc73114-dab4fbfef0.zip/node_modules/foreach/",
           "packageDependencies": [
             ["foreach", "npm:2.0.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["formdata-polyfill", [
+        ["npm:4.0.10", {
+          "packageLocation": "./.yarn/cache/formdata-polyfill-npm-4.0.10-e03013c013-82a34df292.zip/node_modules/formdata-polyfill/",
+          "packageDependencies": [
+            ["formdata-polyfill", "npm:4.0.10"],
+            ["fetch-blob", "npm:3.1.3"]
           ],
           "linkType": "HARD",
         }]
@@ -4384,12 +4425,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:2.6.1", {
+          "packageLocation": "./.yarn/cache/node-fetch-npm-2.6.1-46c670dbc1-91075bedd5.zip/node_modules/node-fetch/",
+          "packageDependencies": [
+            ["node-fetch", "npm:2.6.1"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:2.6.7", {
           "packageLocation": "./.yarn/cache/node-fetch-npm-2.6.7-777aa2a6df-8d816ffd1e.zip/node_modules/node-fetch/",
           "packageDependencies": [
             ["node-fetch", "npm:2.6.7"]
           ],
           "linkType": "SOFT",
+        }],
+        ["npm:3.1.1", {
+          "packageLocation": "./.yarn/cache/node-fetch-npm-3.1.1-5268eea12d-2e03f9a309.zip/node_modules/node-fetch/",
+          "packageDependencies": [
+            ["node-fetch", "npm:3.1.1"],
+            ["data-uri-to-buffer", "npm:4.0.0"],
+            ["fetch-blob", "npm:3.1.3"],
+            ["formdata-polyfill", "npm:4.0.10"]
+          ],
+          "linkType": "HARD",
         }],
         ["virtual:c453af5e5e4d44a07fbb087f6b6867cc7a96309a4acd9e75b963d4480c13768167202e4395c43e21eb442a7611b7eb4f827827a5fe1d24c7e0007af9dd24320f#npm:2.6.7", {
           "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-1f699fffd6/0/cache/node-fetch-npm-2.6.7-777aa2a6df-8d816ffd1e.zip/node_modules/node-fetch/",
@@ -6281,6 +6339,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["web-streams-polyfill", [
+        ["npm:3.2.0", {
+          "packageLocation": "./.yarn/cache/web-streams-polyfill-npm-3.2.0-d541199f29-e23ad06493.zip/node_modules/web-streams-polyfill/",
+          "packageDependencies": [
+            ["web-streams-polyfill", "npm:3.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["webidl-conversions", [
         ["npm:3.0.1", {
           "packageLocation": "./.yarn/cache/webidl-conversions-npm-3.0.1-60310f6a2b-c92a0a6ab9.zip/node_modules/webidl-conversions/",
@@ -6411,6 +6478,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prettier", "npm:2.4.3"],
             ["@typescript-eslint/eslint-plugin", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.9.1"],
             ["@typescript-eslint/parser", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.9.1"],
+            ["cross-fetch", "npm:3.1.4"],
             ["eslint", "npm:8.7.0"],
             ["eslint-config-prettier", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:8.3.0"],
             ["eslint-import-resolver-typescript", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:2.5.0"],
@@ -6424,6 +6492,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["eslint-plugin-unused-imports", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:2.0.0"],
             ["json-to-ts", "npm:1.7.0"],
             ["lodash", "npm:4.17.21"],
+            ["node-fetch", "npm:3.1.1"],
             ["nodemon", "npm:2.0.15"],
             ["prettier", "npm:2.5.1"],
             ["quicktype", "npm:15.0.260"],

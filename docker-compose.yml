@@ -7,8 +7,8 @@ services:
     cap_add:
       - SYS_NICE # CAP_SYS_NICE
     platform: linux/amd64 # Apple M1 fix
-    #volumes:
-    #  - ./db.sql:/docker-entrypoint-initdb.d/db.sql
+    volumes:
+      - ./docker/db.sql:/docker-entrypoint-initdb.d/db.sql
     environment:
       MYSQL_DATABASE: wordpress
       MYSQL_PASSWORD: wordpress_db_password
@@ -21,7 +21,7 @@ services:
     depends_on:
       - db
     build:
-      context: .
+      context: docker
       dockerfile: Dockerfile
     environment:
       WORDPRESS_DB_HOST: db
@@ -37,17 +37,17 @@ services:
     networks:
       - wpsite
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    depends_on:
-      - db
-    ports:
-      - '8000:80'
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: password
-    networks:
-      - wpsite
+  #phpmyadmin:
+  #  image: phpmyadmin/phpmyadmin
+  #  depends_on:
+  #    - db
+  #  ports:
+  #    - '8000:80'
+  #  environment:
+  #    PMA_HOST: db
+  #    MYSQL_ROOT_PASSWORD: password
+  #  networks:
+  #    - wpsite
 
 
 networks:
