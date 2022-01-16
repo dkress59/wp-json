@@ -1,5 +1,7 @@
-# Only commit to NPM
+# Build
 WpREST.ts
+dist/
+src/index.ts
 
 # Yarn 2
 .yarn/*
