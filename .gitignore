@@ -2,6 +2,7 @@
 WpREST.ts
 dist/
 src/index.ts
+src/index.d.ts
 
 # Yarn 2
 .yarn/*

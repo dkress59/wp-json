@@ -23,6 +23,8 @@ services:
     build:
       context: docker
       dockerfile: Dockerfile
+    volumes:
+      - wordpress:/var/www/html
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: wordpress
@@ -52,3 +54,6 @@ services:
 
 networks:
   wpsite:
+
+volumes:
+  wordpress:

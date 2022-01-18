@@ -7,7 +7,9 @@
   "license": "MIT",
   "packageManager": "yarn@3.1.1",
   "scripts": {
-    "dev": "nodemon src/main.ts --ignore src/index.ts",
+      "build": "dtsgen -o src/index.d.ts --url='http://localhost:8080/wp-json/document-generator-for-openapi/v1/document?namespace=wp/v2'",
+      "build2": "dtsgen -o src/index.d.ts --url='http://localhost:8080/rest-api/schema'",
+    "dev": "nodemon src/main.ts --ignore src/index.ts --ignore src/index.d.ts",
     "update:specs": "quicktype --src http://localhost:8080/wp-json/wp/v2/ --src-lang json --lang typescript --top-level WpREST --out WpRest.ts",
     "check:script": "eslint src --ext .ts --fix-dry-run --report-unused-disable-directives",
     "lint:script": "eslint src --ext .ts --fix"
@@ -20,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "5.9.1",
     "@typescript-eslint/parser": "5.9.1",
     "cross-fetch": "^3.1.4",
+    "dtsgenerator": "^3.13.2",
     "eslint": "8.7.0",
     "eslint-config-prettier": "8.3.0",
     "eslint-import-resolver-typescript": "2.5.0",

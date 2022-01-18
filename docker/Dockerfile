@@ -9,4 +9,13 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     && chmod +x wp-cli.phar \
     && mv ./wp-cli.phar /usr/local/bin/wp
 
+WORKDIR /usr/src/wordpress
+
+RUN composer init \
+      --stability 'dev' \
+      --name 'wp-ts/types-base'
+RUN composer config repositories.wpackagist '{"type":"composer","url":"https://wpackagist.org","only":["wpackagist-plugin/*","wpackagist-theme/*"]}'
+RUN composer require "wpackagist-plugin/document-generator-for-openapi"
+RUN composer require "wpackagist-plugin/wp-api-swaggerui"
+
 WORKDIR /var/www/html
