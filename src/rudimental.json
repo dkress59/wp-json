@@ -1,0 +1,48 @@
+{
+    "content": {
+        "description": "Der Inhalt für den Beitrag.",
+        "type": "object",
+        "properties": {
+            "raw": {
+                "description": "Inhalt für den Beitrag, wie er in der Datenbank vorliegt.",
+                "type": "string",
+                "context": [
+                    "edit"
+                ]
+            },
+            "rendered": {
+                "description": "HTML-Inhalt für den Beitrag, transformiert für die Anzeige.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "block_version": {
+                "description": "Version des Inhalt-Block-Formates, das von dem Beitrag genutzt wird.",
+                "type": "integer",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "protected": {
+                "description": "Ob der Inhalt durch ein Passwort geschützt ist.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            }
+        },
+        "required": false
+    },
+    "author": {
+        "description": "Die ID für den Autor des Beitrags.",
+        "type": "integer",
+        "required": false
+    }
+}

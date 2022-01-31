@@ -1,41 +1,27 @@
-import JsonToTS from 'json-to-ts'
 import fsPromises from 'fs/promises'
 import path from 'path'
 import fetch from 'cross-fetch'
 import dtsgenerator, { parseSchema } from 'dtsgenerator'
-import convert from '@openapi-contrib/json-schema-to-openapi-schema'
+import { capitalize } from 'lodash'
 
 async function main() {
-	/* const routes = Object.keys((await (
-		await fetch('http://localhost:8080/wp-json/wp/v2/?context=view')
-	).json()).routes).filter(entry => !entry.includes('(')) */
-	const publicView = JSON.parse(
-		(await (
-			await fetch('http://localhost:8080/wp-json/wp/v2/?context=view')
-		).text())
-		.replace('"bool"', '"boolean"'))
-	const publicEmbed = JSON.parse(
-		(await (
-			await fetch('http://localhost:8080/wp-json/wp/v2/?context=embed')
-		).text())
-		.replace('"bool"', '"boolean"'))
-	const swagger = JSON.parse(
-		(await (
-			await fetch('http://localhost:8080/wp-json/document-generator-for-openapi/v1/document?namespace=wp/v2')
-		).text())
-		.replace('"bool"', '"boolean"'))
-	const openApi = await convert(publicView)
+	const response = await fetch('http://localhost:8080/wp-json/wp/v2/pages', { method: 'options' })
+	const overview = await response.json()
 
-	//const types = JsonToTS(publicView)
-	const types = await dtsgenerator({
-		contents: [parseSchema(openApi)]
-	})
+	const { schema } = overview
+	try {
+		const types = await dtsgenerator({
+			contents: [parseSchema({ ...schema, id: 'http://wp.rest/WpPage', title: capitalize(schema.title) })]
+		})
+	
+		await fsPromises.writeFile(
+			path.resolve(__dirname, './page.d.ts'),
+			types
+		)
+	} catch (error) {
+		console.error(error)
+	}
 
-
-	await fsPromises.writeFile(
-		path.resolve(__dirname, './index.d.ts'),
-		types//.join("\n\n"),
-	)
 }
 
 void main()
