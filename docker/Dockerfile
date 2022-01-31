@@ -17,5 +17,6 @@ RUN composer init \
 RUN composer config repositories.wpackagist '{"type":"composer","url":"https://wpackagist.org","only":["wpackagist-plugin/*","wpackagist-theme/*"]}'
 RUN composer require "wpackagist-plugin/document-generator-for-openapi"
 RUN composer require "wpackagist-plugin/wp-api-swaggerui"
+RUN composer require "wpackagist-plugin/wordpress-seo"
 
 WORKDIR /var/www/html

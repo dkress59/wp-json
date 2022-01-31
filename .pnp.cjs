@@ -62,6 +62,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["quicktype", "npm:15.0.260"],
             ["quicktype-core", "npm:6.0.70"],
             ["ts-node", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:10.4.0"],
+            ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=493e53"]
           ],
           "linkType": "SOFT",
@@ -6533,6 +6534,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["quicktype", "npm:15.0.260"],
             ["quicktype-core", "npm:6.0.70"],
             ["ts-node", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:10.4.0"],
+            ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=493e53"]
           ],
           "linkType": "SOFT",

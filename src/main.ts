@@ -3,6 +3,7 @@ import fsPromises from 'fs/promises'
 import path from 'path'
 import fetch from 'cross-fetch'
 import dtsgenerator, { parseSchema } from 'dtsgenerator'
+import convert from '@openapi-contrib/json-schema-to-openapi-schema'
 
 async function main() {
 	/* const routes = Object.keys((await (
@@ -23,11 +24,13 @@ async function main() {
 			await fetch('http://localhost:8080/wp-json/document-generator-for-openapi/v1/document?namespace=wp/v2')
 		).text())
 		.replace('"bool"', '"boolean"'))
+	const openApi = await convert(publicView)
 
 	//const types = JsonToTS(publicView)
 	const types = await dtsgenerator({
-		contents: [parseSchema(swagger)]
+		contents: [parseSchema(openApi)]
 	})
+
 
 	await fsPromises.writeFile(
 		path.resolve(__dirname, './index.d.ts'),
