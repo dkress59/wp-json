@@ -4,9 +4,8 @@ dist/
 src/index.ts
 src/index.d.ts
 
-# Yarn 2
+# Yarn 2.pnp.*
 .yarn/*
-!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
