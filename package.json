@@ -1,13 +1,13 @@
 {
   "name": "wp-rest-types",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Typings for the WordPress REST API",
   "main": "dist/index.js",
   "author": "dkress59 <28515387+dkress59@users.noreply.github.com>",
   "license": "MIT",
   "packageManager": "yarn@3.1.1",
   "scripts": {
-    "dev": "nodemon src/main.ts --ignore src/index.ts --ignore dist",
+    "dev": "nodemon src/main.ts --ignore src/index.d.ts --ignore dist",
     "docker": "docker-compose up --build -d",
     "docker:down": "docker-compose down && docker volume rm wp-rest-types_wordpress",
     "check:script": "eslint src --ext .ts --fix-dry-run --report-unused-disable-directives",

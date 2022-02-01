@@ -126,6 +126,44 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 		}
 }
 
+async function trimFile(file: string): Promise<string> {
+	file = path.resolve(__dirname, '../dist') + '/' + file
+	const data = await fsPromises.readFile(file, 'utf8')
+	const split = data.split('\n')
+	return '\n' + split.slice(1, split.length - 2).join('\n') + '\n'
+}
+
+async function compressFinal(output: string) {
+	const files = await fsPromises.readdir(output)
+	const createContext = files.filter(file => file.endsWith('.create.d.ts'))
+	const embedContext = files.filter(file => file.endsWith('.embed.d.ts'))
+	const editContext = files.filter(file => file.endsWith('.edit.d.ts'))
+	const viewContext = files.filter(file => file.endsWith('.view.d.ts'))
+
+	let final = 'declare namespace WpRest {\n'
+	for await (const file of viewContext) final += await trimFile(file)
+
+	final += '\n\ndeclare namespace CreateContext {\n'
+	for await (const file of createContext) final += await trimFile(file)
+	final += '\n}\n'
+
+	final += '\n\ndeclare namespace EditContext {\n'
+	for await (const file of editContext) final += await trimFile(file)
+	final += '\n}\n'
+
+	final += '\n\ndeclare namespace EmbedContext {\n'
+	for await (const file of embedContext) final += await trimFile(file)
+	final += '\n}\n'
+
+	final += '\n}\n'
+
+	await fsPromises.writeFile(
+		path.resolve(__dirname) + '/index.d.ts',
+		final,
+		'utf8',
+	)
+}
+
 async function main() {
 	const output = path.resolve(__dirname, '../dist')
 	await new Promise((resolve, reject) => {
@@ -159,6 +197,8 @@ async function main() {
 		.filter(route => !route.includes('theme'))
 
 	await Promise.all(endpoints.map(endpointToDts))
+
+	await compressFinal(output)
 }
 
 void main()
