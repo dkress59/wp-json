@@ -170,6 +170,7 @@ async function main() {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
 	})
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
+
 	// GET (routes)
 	const { routes } = (await (await fetch(baseUrl + baseEP)).json()) as {
 		routes: Record<string, RouteLevel>
@@ -188,17 +189,16 @@ async function main() {
 		})
 		.filter(route => !route.uri.endsWith(')'))
 		.filter(route => !route.uri.includes('<'))
+		// TODO: fix dts-generation for theme endpoint
 		.filter(route => !route.uri.includes('theme'))
-
-	const uris = Object.keys(routes)
-		.slice(1)
-		.filter(route => !route.endsWith(')'))
-		.filter(route => !route.includes('<'))
-		.filter(route => !route.includes('theme'))
 
 	await Promise.all(endpoints.map(endpointToDts))
 
 	await compressFinal(output)
+
+	await new Promise((resolve, reject) => {
+		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
+	})
 }
 
 void main()
