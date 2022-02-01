@@ -77,8 +77,8 @@ async function main() {
 	const output = path.resolve(__dirname, '../dist')
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
 	const { routes } = await (
-		await fetch(baseUrl + baseEP) // GET
-	)
+		await fetch(baseUrl + baseEP)
+	) // GET
 		.json()
 	const uris = Object.keys(routes)
 		.slice(1)
