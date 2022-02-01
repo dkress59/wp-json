@@ -43,8 +43,9 @@ function transformForContext(
 
 async function endpointDts(route: string) {
 	route = route.replace(baseEP, '')
+	// OPTIONS
 	const response = await fetch(baseUrl + baseEP + route, {
-		method: 'options', // OPTIONS
+		method: 'options',
 	})
 	const rawSchema = JSON.stringify(await response.json())
 	const { schema } = JSON.parse(
@@ -88,21 +89,17 @@ async function main() {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
 	})
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
-	const { routes } = (await (
-		await fetch(baseUrl + baseEP)
-	) // GET
-		.json()) as { routes: Record<string, unknown> }
+	// GET
+	const { routes } = (await (await fetch(baseUrl + baseEP)).json()) as {
+		routes: Record<string, unknown>
+	}
 	const uris = Object.keys(routes)
 		.slice(1)
 		.filter(route => !route.endsWith(')'))
+		.filter(route => !route.includes('<'))
+		.filter(route => !route.includes('theme'))
 
-	const resolved = uris.map(uri => {
-		if (!uri.includes('<')) {
-			return endpointDts(uri)
-		}
-	})
-
-	await Promise.all(resolved)
+	await Promise.all(uris.map(endpointDts))
 }
 
 void main()
