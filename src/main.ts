@@ -16,6 +16,16 @@ interface TopLevel {
 		title: string
 	}
 }
+interface RouteLevel {
+	namespace: string
+	methods: string[]
+	endpoints: { methods: string[]; args: Record<string, unknown> }[]
+}
+interface Collection {
+	uri: string
+	postSchema?: Record<string, unknown>
+}
+
 type RestContext = 'view' | 'edit' | 'embed'
 
 function transformForContext(
@@ -41,17 +51,17 @@ function transformForContext(
 	return copy
 }
 
-async function endpointDts(route: string) {
-	route = route.replace(baseEP, '')
-	// OPTIONS
+async function endpointToDts({ uri, postSchema }: Collection) {
+	const route = uri.replace(baseEP, '')
+	// OPTIONS (schema)
 	const response = await fetch(baseUrl + baseEP + route, {
 		method: 'options',
 	})
 	const rawSchema = JSON.stringify(await response.json())
 	const { schema } = JSON.parse(
-		rawSchema.replaceAll('"bool"', '"boolean"'),
+		rawSchema.replaceAll('"bool"', '"boolean"'), // wtf
 	) as TopLevel
-	const { title } = schema
+	const title = schema.title.replace('wp_', 'wp-')
 
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
 		async context => {
@@ -62,7 +72,7 @@ async function endpointDts(route: string) {
 						parseSchema({
 							...transformed,
 							id: `http://${context}.context/Wp${capitalize(
-								title,
+								title.replace('wp-', ''),
 							)}`,
 							title: capitalize(schema.title),
 						}),
@@ -81,6 +91,39 @@ async function endpointDts(route: string) {
 		},
 	)
 	await Promise.all(contexts)
+
+	if (postSchema)
+		try {
+			postSchema = JSON.parse(
+				JSON.stringify(postSchema)
+					.replaceAll(',"required":true', '')
+					.replaceAll(',"required":false', ''),
+			) as Record<string, unknown>
+			const postTypes = await dtsgenerator({
+				contents: [
+					parseSchema({
+						$schema: 'http://json-schema.org/draft-04/schema#',
+						type: 'object',
+						id: `http://create.context/Wp${capitalize(
+							title.replace('wp-', ''),
+						)}`,
+						title: capitalize(schema.title),
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						properties: postSchema,
+					}),
+				],
+			})
+
+			const fileName = `${title}.create.d.ts`
+			console.debug(`writing ${fileName}`)
+			return fsPromises.writeFile(
+				path.resolve(__dirname, `../dist/${fileName}`),
+				postTypes,
+			)
+		} catch (error) {
+			console.error(error)
+		}
 }
 
 async function main() {
@@ -89,17 +132,33 @@ async function main() {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
 	})
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
-	// GET
+	// GET (routes)
 	const { routes } = (await (await fetch(baseUrl + baseEP)).json()) as {
-		routes: Record<string, unknown>
+		routes: Record<string, RouteLevel>
 	}
+
+	const endpoints: Collection[] = Object.values(routes)
+		.slice(1)
+		.map((route, i) => {
+			const uri = Object.keys(routes).slice(1)[i]
+			const postSchema =
+				route.endpoints.length > 1 ? route.endpoints[1].args : undefined
+			return {
+				uri,
+				postSchema,
+			}
+		})
+		.filter(route => !route.uri.endsWith(')'))
+		.filter(route => !route.uri.includes('<'))
+		.filter(route => !route.uri.includes('theme'))
+
 	const uris = Object.keys(routes)
 		.slice(1)
 		.filter(route => !route.endsWith(')'))
 		.filter(route => !route.includes('<'))
 		.filter(route => !route.includes('theme'))
 
-	await Promise.all(uris.map(endpointDts))
+	await Promise.all(endpoints.map(endpointToDts))
 }
 
 void main()
