@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { capitalize } from 'lodash'
 import { isRecord } from '@tool-belt/type-predicates'
 import dtsgenerator, { parseSchema } from 'dtsgenerator'
@@ -5,14 +6,20 @@ import fetch from 'cross-fetch'
 import fs from 'fs'
 import fsPromises from 'fs/promises'
 import path from 'path'
+import rimraf from 'rimraf'
 
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
 
+interface TopLevel {
+	schema: Record<string, unknown> & {
+		title: string
+	}
+}
 type RestContext = 'view' | 'edit' | 'embed'
 
 function transformForContext(
-	entry: Record<string, Record<string, unknown>>,
+	entry: Record<string, unknown>,
 	context: RestContext,
 ) {
 	const copy = { ...entry }
@@ -40,7 +47,9 @@ async function endpointDts(route: string) {
 		method: 'options', // OPTIONS
 	})
 	const rawSchema = JSON.stringify(await response.json())
-	const { schema } = JSON.parse(rawSchema.replaceAll('"bool"', '"boolean"'))
+	const { schema } = JSON.parse(
+		rawSchema.replaceAll('"bool"', '"boolean"'),
+	) as TopLevel
 	const { title } = schema
 
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
@@ -75,22 +84,25 @@ async function endpointDts(route: string) {
 
 async function main() {
 	const output = path.resolve(__dirname, '../dist')
+	await new Promise((resolve, reject) => {
+		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
+	})
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
-	const { routes } = await (
+	const { routes } = (await (
 		await fetch(baseUrl + baseEP)
 	) // GET
-		.json()
+		.json()) as { routes: Record<string, unknown> }
 	const uris = Object.keys(routes)
 		.slice(1)
 		.filter(route => !route.endsWith(')'))
 
-	uris.map(uri => {
+	const resolved = uris.map(uri => {
 		if (!uri.includes('<')) {
 			return endpointDts(uri)
 		}
 	})
 
-	await Promise.all(uris)
+	await Promise.all(resolved)
 }
 
 void main()

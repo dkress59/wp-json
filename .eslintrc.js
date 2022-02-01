@@ -1,8 +1,5 @@
 module.exports = {
 	root: true,
-	env: {
-		node: true,
-	},
 	extends: ['@sprylab/eslint-config'],
 	parserOptions: {
 		project: ['./tsconfig.json'],
@@ -12,11 +9,7 @@ module.exports = {
 		'import/parsers': {
 			'@typescript-eslint/parser': ['.ts', '.tsx'],
 		},
-		'import/resolver': {
-			typescript: {
-				alwaysTryTypes: true,
-			},
-		},
+		'import/resolver': 'typescript',
 	},
 	rules: {
 		'curly': 'off',

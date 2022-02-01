@@ -40,6 +40,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.178"],
             ["@types/node", "npm:17.0.13"],
             ["@types/prettier", "npm:2.4.3"],
+            ["@types/rimraf", "npm:3.0.2"],
             ["@typescript-eslint/eslint-plugin", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.10.2"],
             ["@typescript-eslint/parser", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.10.2"],
             ["cross-fetch", "npm:3.1.5"],
@@ -59,6 +60,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:3.2.0"],
             ["nodemon", "npm:2.0.15"],
             ["prettier", "npm:2.5.1"],
+            ["rimraf", "npm:3.0.2"],
             ["ts-node", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:10.4.0"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
@@ -508,6 +510,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/glob", [
+        ["npm:7.2.0", {
+          "packageLocation": "./.yarn/cache/@types-glob-npm-7.2.0-772334bf9a-6ae717fedf.zip/node_modules/@types/glob/",
+          "packageDependencies": [
+            ["@types/glob", "npm:7.2.0"],
+            ["@types/minimatch", "npm:3.0.5"],
+            ["@types/node", "npm:17.0.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/json-schema", [
         ["npm:7.0.9", {
           "packageLocation": "./.yarn/cache/@types-json-schema-npm-7.0.9-361918cff3-259d0e25f1.zip/node_modules/@types/json-schema/",
@@ -545,6 +558,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@types/minimatch", [
+        ["npm:3.0.5", {
+          "packageLocation": "./.yarn/cache/@types-minimatch-npm-3.0.5-802bb0797f-c41d136f67.zip/node_modules/@types/minimatch/",
+          "packageDependencies": [
+            ["@types/minimatch", "npm:3.0.5"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@types/node", [
         ["npm:17.0.13", {
           "packageLocation": "./.yarn/cache/@types-node-npm-17.0.13-0b4bf052b4-8b87c850c1.zip/node_modules/@types/node/",
@@ -575,6 +597,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-responselike-npm-1.0.0-85dd08af42-e99fc7cc62.zip/node_modules/@types/responselike/",
           "packageDependencies": [
             ["@types/responselike", "npm:1.0.0"],
+            ["@types/node", "npm:17.0.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@types/rimraf", [
+        ["npm:3.0.2", {
+          "packageLocation": "./.yarn/cache/@types-rimraf-npm-3.0.2-dd6eb5de99-b47fa302f4.zip/node_modules/@types/rimraf/",
+          "packageDependencies": [
+            ["@types/rimraf", "npm:3.0.2"],
+            ["@types/glob", "npm:7.2.0"],
             ["@types/node", "npm:17.0.8"]
           ],
           "linkType": "HARD",
@@ -5330,6 +5363,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/lodash", "npm:4.14.178"],
             ["@types/node", "npm:17.0.13"],
             ["@types/prettier", "npm:2.4.3"],
+            ["@types/rimraf", "npm:3.0.2"],
             ["@typescript-eslint/eslint-plugin", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.10.2"],
             ["@typescript-eslint/parser", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:5.10.2"],
             ["cross-fetch", "npm:3.1.5"],
@@ -5349,6 +5383,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:3.2.0"],
             ["nodemon", "npm:2.0.15"],
             ["prettier", "npm:2.5.1"],
+            ["rimraf", "npm:3.0.2"],
             ["ts-node", "virtual:88f74d588e80741ee0006f4dae10b9569065acd72fa3c210a334e3b42a1d8ef3c6a2ab5c56e0d46bac4356407451364e1a5d32e185b10f189b6360b92d71db8f#npm:10.4.0"],
             ["tslib", "npm:2.3.1"],
             ["typescript", "patch:typescript@npm%3A4.5.5#~builtin<compat/typescript>::version=4.5.5&hash=493e53"]
