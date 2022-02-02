@@ -1,8 +1,8 @@
 # Build
 WpREST.ts
 dist/
+src/context/
 src/index.ts
-src/index.d.ts
 
 # Yarn 2.pnp.*
 .yarn/*

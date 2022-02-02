@@ -11,13 +11,14 @@ import rimraf from 'rimraf'
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
 
+const output = path.resolve(__dirname, './context')
+
 interface TopLevel {
 	schema: Record<string, unknown> & {
 		title: string
 	}
 }
 interface RouteLevel {
-	namespace: string
 	methods: string[]
 	endpoints: { methods: string[]; args: Record<string, unknown> }[]
 }
@@ -63,6 +64,14 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 	) as TopLevel
 	const title = schema.title.replace('wp_', 'wp-')
 
+	await Promise.all(
+		['view', 'create', 'edit', 'embed'].map(context =>
+			fsPromises.writeFile(
+				path.resolve(output, `./${context}/index.d.ts`),
+				"export * from '.'",
+			),
+		),
+	)
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
 		async context => {
 			try {
@@ -78,12 +87,13 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 						}),
 					],
 				})
+				if (types.includes('{}')) return Promise.resolve(null) //FIXME
 
-				const fileName = `${title}.${context}.d.ts`
+				const fileName = `${context}.${title}.d.ts`
 				console.debug(`writing ${fileName}`)
 				return fsPromises.writeFile(
-					path.resolve(__dirname, `../dist/${fileName}`),
-					types.replaceAll('?: ', ': '),
+					path.resolve(output, `./${context}/${fileName}`),
+					trimData(types.replaceAll('?: ', ': ')),
 				)
 			} catch (error) {
 				console.error(error)
@@ -115,22 +125,26 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 				],
 			})
 
-			const fileName = `${title}.create.d.ts`
+			const fileName = `create.${title}.d.ts`
 			console.debug(`writing ${fileName}`)
 			return fsPromises.writeFile(
-				path.resolve(__dirname, `../dist/${fileName}`),
-				postTypes,
+				path.resolve(output, `./create/${fileName}`),
+				trimData(postTypes),
 			)
 		} catch (error) {
 			console.error(error)
 		}
 }
 
-async function trimFile(file: string): Promise<string> {
-	file = path.resolve(__dirname, '../dist') + '/' + file
-	const data = await fsPromises.readFile(file, 'utf8')
+function trimData(data: string): string {
 	const split = data.split('\n')
-	return '\n' + split.slice(1, split.length - 2).join('\n') + '\n'
+	return split.slice(1, split.length - 2).join('\n')
+}
+
+async function trimFile(file: string): Promise<string> {
+	file = path.resolve(output, `./${file}`)
+	const data = await fsPromises.readFile(file, 'utf8')
+	return '\n' + trimData(data) + '\n'
 }
 
 async function compressFinal(output: string) {
@@ -140,7 +154,10 @@ async function compressFinal(output: string) {
 	const editContext = files.filter(file => file.endsWith('.edit.d.ts'))
 	const viewContext = files.filter(file => file.endsWith('.view.d.ts'))
 
-	let final = 'declare namespace WpRest {\n'
+	console.debug('---')
+	console.debug('writing index.d.ts')
+
+	let final = 'export namespace WpRest {\n'
 	for await (const file of viewContext) final += await trimFile(file)
 
 	final += '\n\ndeclare namespace CreateContext {\n'
@@ -165,11 +182,18 @@ async function compressFinal(output: string) {
 }
 
 async function main() {
-	const output = path.resolve(__dirname, '../dist')
 	await new Promise((resolve, reject) => {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
 	})
 	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
+	if (!fs.existsSync(output + '/view'))
+		await fsPromises.mkdir(output + '/view')
+	if (!fs.existsSync(output + '/edit'))
+		await fsPromises.mkdir(output + '/edit')
+	if (!fs.existsSync(output + '/embed'))
+		await fsPromises.mkdir(output + '/embed')
+	if (!fs.existsSync(output + '/create'))
+		await fsPromises.mkdir(output + '/create')
 
 	// GET (routes)
 	const { routes } = (await (await fetch(baseUrl + baseEP)).json()) as {
@@ -194,11 +218,11 @@ async function main() {
 
 	await Promise.all(endpoints.map(endpointToDts))
 
-	await compressFinal(output)
+	//await compressFinal(output)
 
-	await new Promise((resolve, reject) => {
+	/* await new Promise((resolve, reject) => {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
-	})
+	}) */
 }
 
 void main()

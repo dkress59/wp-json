@@ -1,13 +1,14 @@
 {
-  "name": "wp-rest-types",
+  "name": "wp-json",
   "version": "0.1.0",
   "description": "Typings for the WordPress REST API",
-  "main": "src/main.ts",
   "author": "dkress59 <28515387+dkress59@users.noreply.github.com>",
   "license": "MIT",
   "packageManager": "yarn@3.1.1",
-  "types": "src/index.d.ts",
+  "main": "",
+  "types": "./src/index.d.ts",
   "scripts": {
+    "build": "ts-node src/main.ts && echo 'linting…' &&  yarn lint:script",
     "dev": "nodemon src/main.ts --watch src --ignore src/index.d.ts",
     "docker": "docker-compose up --build -d",
     "docker:down": "docker-compose down && docker volume rm wp-rest-types_wordpress",
@@ -15,8 +16,11 @@
     "lint:script": "eslint src --ext .ts --fix"
   },
   "devDependencies": {
+    "@babel/core": "7.16.12",
+    "@babel/eslint-parser": "7.16.5",
     "@sprylab/eslint-config": "1.6.2",
     "@tool-belt/type-predicates": "1.2.0",
+    "@types/babel__core": "7.1.18",
     "@types/lodash": "4.14.178",
     "@types/node": "17.0.14",
     "@types/prettier": "2.4.3",
