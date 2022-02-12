@@ -11,7 +11,7 @@ import rimraf from 'rimraf'
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
 
-const output = path.resolve(__dirname, './context')
+const output = path.resolve(__dirname, '../dist')
 
 interface TopLevel {
 	schema: Record<string, unknown> & {
@@ -64,14 +64,14 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 	) as TopLevel
 	const title = schema.title.replace('wp_', 'wp-')
 
-	await Promise.all(
+	/* await Promise.all(
 		['view', 'create', 'edit', 'embed'].map(context =>
 			fsPromises.writeFile(
 				path.resolve(output, `./${context}/index.d.ts`),
 				"export * from '.'",
 			),
 		),
-	)
+	) */
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
 		async context => {
 			try {
@@ -93,7 +93,8 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 				console.debug(`writing ${fileName}`)
 				return fsPromises.writeFile(
 					path.resolve(output, `./${context}/${fileName}`),
-					trimData(types.replaceAll('?: ', ': ')),
+					//trimData(types.replaceAll('?: ', ': ')),
+					types.replaceAll('?: ', ': '),
 				)
 			} catch (error) {
 				console.error(error)
@@ -129,7 +130,8 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 			console.debug(`writing ${fileName}`)
 			return fsPromises.writeFile(
 				path.resolve(output, `./create/${fileName}`),
-				trimData(postTypes),
+				//trimData(postTypes),
+				postTypes,
 			)
 		} catch (error) {
 			console.error(error)
@@ -148,31 +150,39 @@ async function trimFile(file: string): Promise<string> {
 }
 
 async function compressFinal(output: string) {
-	const files = await fsPromises.readdir(output)
-	const createContext = files.filter(file => file.endsWith('.create.d.ts'))
-	const embedContext = files.filter(file => file.endsWith('.embed.d.ts'))
-	const editContext = files.filter(file => file.endsWith('.edit.d.ts'))
-	const viewContext = files.filter(file => file.endsWith('.view.d.ts'))
+	const createContext = await fsPromises.readdir(
+		path.resolve(output, './create'),
+	)
+	const embedContext = await fsPromises.readdir(
+		path.resolve(output, './embed'),
+	)
+	const editContext = await fsPromises.readdir(path.resolve(output, './edit'))
+	const viewContext = await fsPromises.readdir(path.resolve(output, './view'))
 
 	console.debug('---')
 	console.debug('writing index.d.ts')
 
-	let final = 'export namespace WpRest {\n'
-	for await (const file of viewContext) final += await trimFile(file)
+	//let final = 'export namespace WpRest {\n'
+	let final = ''
+	for await (const file of viewContext)
+		final += await trimFile('./view/' + file)
 
-	final += '\n\ndeclare namespace CreateContext {\n'
-	for await (const file of createContext) final += await trimFile(file)
+	final += '\nexport namespace CreateContext {\n'
+	for await (const file of createContext)
+		final += await trimFile('./create/' + file)
 	final += '\n}\n'
 
-	final += '\n\ndeclare namespace EditContext {\n'
-	for await (const file of editContext) final += await trimFile(file)
+	final += '\nexport namespace EditContext {\n'
+	for await (const file of editContext)
+		final += await trimFile('./edit/' + file)
 	final += '\n}\n'
 
-	final += '\n\ndeclare namespace EmbedContext {\n'
-	for await (const file of embedContext) final += await trimFile(file)
+	final += '\nexport namespace EmbedContext {\n'
+	for await (const file of embedContext)
+		final += await trimFile('./embed/' + file)
 	final += '\n}\n'
 
-	final += '\n}\n'
+	//final += '\n}\n'
 
 	await fsPromises.writeFile(
 		path.resolve(__dirname) + '/index.d.ts',
@@ -218,11 +228,11 @@ async function main() {
 
 	await Promise.all(endpoints.map(endpointToDts))
 
-	//await compressFinal(output)
+	await compressFinal(output)
 
-	/* await new Promise((resolve, reject) => {
+	await new Promise((resolve, reject) => {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
-	}) */
+	})
 }
 
 void main()
