@@ -125,6 +125,7 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 					}),
 				],
 			})
+			if (postTypes.includes('{}')) return Promise.resolve(null) //FIXME
 
 			const fileName = `create.${title}.d.ts`
 			console.debug(`writing ${fileName}`)

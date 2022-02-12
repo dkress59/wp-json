@@ -37,6 +37,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/core", "npm:7.16.12"],
             ["@babel/eslint-parser", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
+            ["@babel/eslint-plugin", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
             ["@sprylab/eslint-config", "npm:1.6.2"],
             ["@tool-belt/type-predicates", "npm:1.2.0"],
             ["@types/babel__core", "npm:7.1.18"],
@@ -177,6 +178,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/babel__eslint-parser", null],
             ["@types/eslint", null],
             ["eslint", null],
+            ["eslint-rule-composer", "npm:0.3.0"]
+          ],
+          "packagePeers": [
+            "@babel/eslint-parser",
+            "@types/babel__eslint-parser",
+            "@types/eslint",
+            "eslint"
+          ],
+          "linkType": "HARD",
+        }],
+        ["virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5", {
+          "packageLocation": "./.yarn/__virtual__/@babel-eslint-plugin-virtual-efd4284876/0/cache/@babel-eslint-plugin-npm-7.16.5-f9efd56b40-479fb45cb7.zip/node_modules/@babel/eslint-plugin/",
+          "packageDependencies": [
+            ["@babel/eslint-plugin", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
+            ["@babel/eslint-parser", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
+            ["@types/babel__eslint-parser", null],
+            ["@types/eslint", null],
+            ["eslint", "npm:8.8.0"],
             ["eslint-rule-composer", "npm:0.3.0"]
           ],
           "packagePeers": [
@@ -5583,6 +5602,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["wp-json", "workspace:."],
             ["@babel/core", "npm:7.16.12"],
             ["@babel/eslint-parser", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
+            ["@babel/eslint-plugin", "virtual:e3d3ef358d55a90584ff606f7955c22e42950f69b54f34bf8471f5b1097e58f774532b448a4b0fa565a5a8be154968cfde6b87e3faebbd4220d8f2784b98f00c#npm:7.16.5"],
             ["@sprylab/eslint-config", "npm:1.6.2"],
             ["@tool-belt/type-predicates", "npm:1.2.0"],
             ["@types/babel__core", "npm:7.1.18"],

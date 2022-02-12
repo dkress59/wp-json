@@ -58,7 +58,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-plugin@npm:^7.14.5":
+"@babel/eslint-plugin@npm:7.16.5, @babel/eslint-plugin@npm:^7.14.5":
   version: 7.16.5
   resolution: "@babel/eslint-plugin@npm:7.16.5"
   dependencies:
@@ -4435,6 +4435,7 @@ __metadata:
   dependencies:
     "@babel/core": 7.16.12
     "@babel/eslint-parser": 7.16.5
+    "@babel/eslint-plugin": 7.16.5
     "@sprylab/eslint-config": 1.6.2
     "@tool-belt/type-predicates": 1.2.0
     "@types/babel__core": 7.1.18
