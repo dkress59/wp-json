@@ -52,6 +52,13 @@ function transformForContext(
 	return copy
 }
 
+async function createIndexDts(context: string) {
+	return fsPromises.writeFile(
+		path.resolve(output, `./${context}/index.d.ts`),
+		"export * from '.'",
+	)
+}
+
 async function endpointToDts({ uri, postSchema }: Collection) {
 	const route = uri.replace(baseEP, '')
 	// OPTIONS (schema)
@@ -64,14 +71,8 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 	) as TopLevel
 	const title = schema.title.replace('wp_', 'wp-')
 
-	/* await Promise.all(
-		['view', 'create', 'edit', 'embed'].map(context =>
-			fsPromises.writeFile(
-				path.resolve(output, `./${context}/index.d.ts`),
-				"export * from '.'",
-			),
-		),
-	) */
+	// await Promise.all(['view', 'create', 'edit', 'embed'].map(createIndexDts))
+
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
 		async context => {
 			try {
@@ -87,7 +88,14 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 						}),
 					],
 				})
-				if (types.includes('{}')) return Promise.resolve(null) //FIXME
+				if (types.includes('{}')) {
+					await fsPromises.writeFile(
+						path.resolve(__dirname) + '/error.log',
+						JSON.stringify({ context, title }),
+						{ mode: 'a' },
+					)
+					return Promise.resolve(null) //FIXME
+				}
 
 				const fileName = `${context}.${title}.d.ts`
 				console.debug(`writing ${fileName}`)
@@ -125,7 +133,6 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 					}),
 				],
 			})
-			if (postTypes.includes('{}')) return Promise.resolve(null) //FIXME
 
 			const fileName = `create.${title}.d.ts`
 			console.debug(`writing ${fileName}`)
@@ -165,6 +172,7 @@ async function compressFinal(output: string) {
 
 	//let final = 'export namespace WpRest {\n'
 	let final = ''
+
 	for await (const file of viewContext)
 		final += await trimFile('./view/' + file)
 
@@ -224,6 +232,10 @@ async function main() {
 		})
 		.filter(route => !route.uri.endsWith(')'))
 		.filter(route => !route.uri.includes('<'))
+		// TODO: fix dts-generation for block- & pattern-directory endpoints
+		.filter(route => !route.uri.includes('directory'))
+		// TODO: fix dts-generation for search endpoint
+		.filter(route => !route.uri.includes('search'))
 		// TODO: fix dts-generation for theme endpoint
 		.filter(route => !route.uri.includes('theme'))
 

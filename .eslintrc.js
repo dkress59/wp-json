@@ -2,6 +2,8 @@ module.exports = {
 	root: true,
 	extends: ['@sprylab/eslint-config'],
 	ignorePatterns: [
+		'dist',
+		'src/context',
 		'**/view/index.d.ts',
 		'**/edit/index.d.ts',
 		'**/embed/index.d.ts',
@@ -25,5 +27,6 @@ module.exports = {
 		'curly': 'off',
 		'no-console': 'error',
 		'unused-imports/no-unused-imports': 'error',
+		//'@typescript-eslint/no-empty-interface': 'warn', // FIXME
 	},
 }
