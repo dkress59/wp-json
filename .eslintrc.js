@@ -1,7 +1,7 @@
 module.exports = {
 	root: true,
 	extends: [
-		'@sprylab/eslint-config',
+		'@tool-belt/eslint-config',
 		'plugin:import/typescript',
 		'plugin:@typescript-eslint/recommended',
 	],
@@ -9,7 +9,7 @@ module.exports = {
 	parserOptions: {
 		project: ['./tsconfig.json'],
 	},
-	plugins: ['@typescript-eslint', 'unused-imports'],
+	plugins: ['@typescript-eslint'],
 	settings: {
 		'import/parsers': {
 			'@typescript-eslint/parser': ['.d.ts', '.ts', '.tsx'],
@@ -27,6 +27,5 @@ module.exports = {
 	rules: {
 		'curly': 'off',
 		'no-console': 'off',
-		'unused-imports/no-unused-imports': 'error',
 	},
 }

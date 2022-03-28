@@ -1,9 +1,9 @@
-import { capitalize } from 'lodash'
 import { isRecord } from '@tool-belt/type-predicates'
-import dtsgenerator, { parseSchema } from 'dtsgenerator'
 import fetch from 'cross-fetch'
+import dtsgenerator, { parseSchema } from 'dtsgenerator'
 import fs from 'fs'
 import fsPromises from 'fs/promises'
+import { capitalize } from 'lodash'
 import path from 'path'
 import rimraf from 'rimraf'
 
