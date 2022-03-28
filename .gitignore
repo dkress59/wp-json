@@ -1,7 +1,5 @@
 # Build
-WpREST.ts
-dist/
-src/context/
+dist/*
 
 # Yarn 2
 .pnp.*
@@ -14,3 +12,4 @@ src/context/
 
 # Misc
 .DS_Store
+node_modules/*

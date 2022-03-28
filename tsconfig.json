@@ -7,12 +7,10 @@
         ],
         "module": "commonjs",
         "moduleResolution": "Node",
+        "noEmit": true,
         "skipLibCheck": true,
         "strict": true,
         "target": "ESNext",
-        "typeRoots": [
-            "./dist"
-        ],
     },
     "exclude": [
         ".yarn",

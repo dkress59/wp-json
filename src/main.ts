@@ -7,26 +7,12 @@ import { capitalize } from 'lodash'
 import path from 'path'
 import rimraf from 'rimraf'
 
+import { Collection, RestContext, RouteLevel, TopLevel } from './types'
+
 const output = path.resolve(__dirname, '../dist')
 
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
-
-interface TopLevel {
-	schema: Record<string, unknown> & {
-		title: string
-	}
-}
-interface RouteLevel {
-	methods: string[]
-	endpoints: { methods: string[]; args: Record<string, unknown> }[]
-}
-interface Collection {
-	uri: string
-	postSchema?: Record<string, unknown>
-}
-
-type RestContext = 'view' | 'edit' | 'embed'
 
 function transformForContext(
 	entry: Record<string, unknown>,
@@ -62,8 +48,6 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 		rawSchema.replaceAll('"bool"', '"boolean"'), // wtf
 	) as TopLevel
 	const title = schema.title.replace('wp_', 'wp-')
-
-	// await Promise.all(['view', 'create', 'edit', 'embed'].map(createIndexDts))
 
 	const contexts = (['view', 'edit', 'embed'] as RestContext[]).map(
 		async context => {

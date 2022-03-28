@@ -1,5 +1,9 @@
 module.exports = {
 	root: true,
+	env: {
+		browser: true,
+		jest: true,
+	},
 	extends: [
 		'@tool-belt/eslint-config',
 		'plugin:import/typescript',
@@ -12,7 +16,7 @@ module.exports = {
 	plugins: ['@typescript-eslint'],
 	settings: {
 		'import/parsers': {
-			'@typescript-eslint/parser': ['.d.ts', '.ts', '.tsx'],
+			'@typescript-eslint/parser': ['.ts', '.tsx'],
 		},
 		'import/resolver': {
 			typescript: {
