@@ -1,32 +1,32 @@
 module.exports = {
 	root: true,
-	extends: ['@sprylab/eslint-config'],
-	ignorePatterns: [
-		'dist',
-		'src/context',
-		'**/view/index.d.ts',
-		'**/edit/index.d.ts',
-		'**/embed/index.d.ts',
-		'**/create/index.d.ts',
+	extends: [
+		'@sprylab/eslint-config',
+		'plugin:import/typescript',
+		'plugin:@typescript-eslint/recommended',
 	],
+	parser: '@typescript-eslint/parser',
 	parserOptions: {
 		project: ['./tsconfig.json'],
 	},
-	plugins: ['unused-imports'],
+	plugins: ['@typescript-eslint', 'unused-imports'],
 	settings: {
 		'import/parsers': {
-			'@typescript-eslint/parser': ['.ts', '.tsx'],
+			'@typescript-eslint/parser': ['.d.ts', '.ts', '.tsx'],
 		},
 		'import/resolver': {
 			typescript: {
 				alwaysTryTypes: true,
 			},
+			node: {
+				paths: ['src', 'dist'],
+				extensions: ['.js', '.d.ts', '.ts', '.tsx'],
+			},
 		},
 	},
 	rules: {
 		'curly': 'off',
-		'no-console': 'error',
+		'no-console': 'off',
 		'unused-imports/no-unused-imports': 'error',
-		//'@typescript-eslint/no-empty-interface': 'warn', // FIXME
 	},
 }

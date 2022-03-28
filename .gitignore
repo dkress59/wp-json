@@ -2,9 +2,9 @@
 WpREST.ts
 dist/
 src/context/
-src/index.ts
 
-# Yarn 2.pnp.*
+# Yarn 2
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

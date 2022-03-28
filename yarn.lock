@@ -4429,9 +4429,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wp-json@workspace:.":
+"wp-json-types@workspace:.":
   version: 0.0.0-use.local
-  resolution: "wp-json@workspace:."
+  resolution: "wp-json-types@workspace:."
   dependencies:
     "@babel/core": 7.16.12
     "@babel/eslint-parser": 7.16.5

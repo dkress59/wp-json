@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { capitalize } from 'lodash'
 import { isRecord } from '@tool-belt/type-predicates'
 import dtsgenerator, { parseSchema } from 'dtsgenerator'
@@ -8,10 +7,10 @@ import fsPromises from 'fs/promises'
 import path from 'path'
 import rimraf from 'rimraf'
 
+const output = path.resolve(__dirname, '../dist')
+
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
-
-const output = path.resolve(__dirname, '../dist')
 
 interface TopLevel {
 	schema: Record<string, unknown> & {
@@ -50,13 +49,6 @@ function transformForContext(
 		}
 	})
 	return copy
-}
-
-async function createIndexDts(context: string) {
-	return fsPromises.writeFile(
-		path.resolve(output, `./${context}/index.d.ts`),
-		"export * from '.'",
-	)
 }
 
 async function endpointToDts({ uri, postSchema }: Collection) {
@@ -157,7 +149,7 @@ async function trimFile(file: string): Promise<string> {
 	return '\n' + trimData(data) + '\n'
 }
 
-async function compressFinal(output: string) {
+async function compressFinal(output: string): Promise<string> {
 	const createContext = await fsPromises.readdir(
 		path.resolve(output, './create'),
 	)
@@ -170,8 +162,7 @@ async function compressFinal(output: string) {
 	console.debug('---')
 	console.debug('writing index.d.ts')
 
-	//let final = 'export namespace WpRest {\n'
-	let final = ''
+	let final = "declare module 'wp-json-types' {"
 
 	for await (const file of viewContext)
 		final += await trimFile('./view/' + file)
@@ -191,20 +182,24 @@ async function compressFinal(output: string) {
 		final += await trimFile('./embed/' + file)
 	final += '\n}\n'
 
-	//final += '\n}\n'
+	final += '\n}\n'
 
-	await fsPromises.writeFile(
-		path.resolve(__dirname) + '/index.d.ts',
-		final,
-		'utf8',
-	)
+	return final
 }
 
-async function main() {
+async function makeOutputDir(): Promise<void> {
+	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
+}
+
+async function deleteOutputDir(): Promise<void> {
 	await new Promise((resolve, reject) => {
 		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
 	})
-	if (!fs.existsSync(output)) await fsPromises.mkdir(output)
+}
+
+async function main() {
+	await deleteOutputDir()
+	await makeOutputDir()
 	if (!fs.existsSync(output + '/view'))
 		await fsPromises.mkdir(output + '/view')
 	if (!fs.existsSync(output + '/edit'))
@@ -241,11 +236,12 @@ async function main() {
 
 	await Promise.all(endpoints.map(endpointToDts))
 
-	await compressFinal(output)
+	const final = await compressFinal(output)
 
-	await new Promise((resolve, reject) => {
-		rimraf(output, {}, error => (error ? reject(error) : resolve(null)))
-	})
+	await deleteOutputDir()
+	await makeOutputDir()
+
+	await fsPromises.writeFile(output + '/index.d.ts', final, 'utf8')
 }
 
 void main()
