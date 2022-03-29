@@ -14,6 +14,19 @@ const output = path.resolve(__dirname, '../dist')
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
 
+function _upperFirst(string: string) {
+	return string.slice(0, 1).toUpperCase() + string.slice(1, string.length)
+}
+
+function _snakeToPascal(string: string) {
+	return string
+		.split('_')
+		.map(str => {
+			return _upperFirst(str.split('/').map(_upperFirst).join('/'))
+		})
+		.join('')
+}
+
 function transformForContext(
 	entry: Record<string, unknown>,
 	context: RestContext,
@@ -181,6 +194,48 @@ async function deleteOutputDir(): Promise<void> {
 	})
 }
 
+async function extractCommonTypes(): Promise<void> {
+	const bundle = await fsPromises.readFile(
+		path.resolve(output, './index.d.ts'),
+	)
+	const allLines = bundle.toString().split('\n')
+	const interestingUnion = new RegExp(/([a-z_]+): "([a-z| "]+)"/)
+	const matches = allLines.filter(line => {
+		const match = line.match(interestingUnion)
+		return match?.length
+	})
+	const deduplicatedMatches = Array.from(new Set(matches))
+	const multipleMatches = deduplicatedMatches.filter(
+		deduplicated =>
+			matches.filter(matched => matched === deduplicated).length > 1,
+	)
+
+	let commonTypes = ''
+
+	const reversedLines = [...allLines].reverse()
+	multipleMatches.forEach(line => {
+		const firstIndex = reversedLines.indexOf(line)
+		const parentObjectName =
+			[...reversedLines]
+				.slice(firstIndex)
+				.find(line => line.includes('{') && line.includes('Wp'))
+				?.replace('export ', '')
+				.replace('interface ', '')
+				.replaceAll(' ', '')
+				.replace('{', '')
+				.replace(':', '') ?? ''
+		const matchComponents = line.match(interestingUnion)!
+		const nameComponent =
+			_snakeToPascal(parentObjectName) +
+			_snakeToPascal(matchComponents[1]) // + 'Name'
+		const typeComponent = '"' + matchComponents[2] + '"'
+
+		commonTypes += `export type ${nameComponent} = ${typeComponent}\n\n`
+	})
+
+	console.debug(commonTypes)
+}
+
 async function main() {
 	await deleteOutputDir()
 	await makeOutputDir()
@@ -226,6 +281,8 @@ async function main() {
 	await makeOutputDir()
 
 	await fsPromises.writeFile(output + '/index.d.ts', final, 'utf8')
+
+	await extractCommonTypes()
 }
 
 void main()
