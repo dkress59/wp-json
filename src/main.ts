@@ -244,7 +244,9 @@ async function extractCommonTypes(): Promise<void> {
 	})
 
 	allLines.unshift(
-		`import { ${nameComponents.join(', ')} } from './common'\n`,
+		`import { ${nameComponents.join(
+			', ',
+		)} } from './common'\n\nexport * from './common'\n`,
 	)
 	await fsPromises.writeFile(output + '/common.ts', commonTypes, 'utf8')
 	await fsPromises.writeFile(
