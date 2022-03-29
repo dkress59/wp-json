@@ -194,31 +194,32 @@ async function deleteOutputDir(): Promise<void> {
 	})
 }
 
+// FIXME: needs to replace in all places/contexts
 async function extractCommonTypes(): Promise<void> {
 	const bundle = await fsPromises.readFile(
 		path.resolve(output, './index.d.ts'),
 	)
 	const allLines = bundle.toString().split('\n')
 	const interestingUnion = new RegExp(/([a-z_]+): "([a-z| "]+)"/)
-	const matches = allLines.filter(line => {
+	const matched: { line: string; lineNum: number }[] = []
+	allLines.forEach((line, lineNum) => {
 		const match = line.match(interestingUnion)
-		return match?.length
+		if ((match?.length ?? []) > 1) matched.push({ line, lineNum })
 	})
-	const deduplicatedMatches = Array.from(new Set(matches))
-	const multipleMatches = deduplicatedMatches.filter(
-		deduplicated =>
-			matches.filter(matched => matched === deduplicated).length > 1,
-	)
 
 	let commonTypes = ''
+	const nameComponents: string[] = []
 
 	const reversedLines = [...allLines].reverse()
-	multipleMatches.forEach(line => {
-		const firstIndex = reversedLines.indexOf(line)
+	matched.forEach(({ line, lineNum }) => {
 		const parentObjectName =
 			[...reversedLines]
-				.slice(firstIndex)
-				.find(line => line.includes('{') && line.includes('Wp'))
+				.slice(lineNum)
+				.find(
+					reversedLine =>
+						reversedLine.includes('{') &&
+						reversedLine.includes('Wp'),
+				)
 				?.replace('export ', '')
 				.replace('interface ', '')
 				.replaceAll(' ', '')
@@ -227,13 +228,30 @@ async function extractCommonTypes(): Promise<void> {
 		const matchComponents = line.match(interestingUnion)!
 		const nameComponent =
 			_snakeToPascal(parentObjectName) +
-			_snakeToPascal(matchComponents[1]) // + 'Name'
+			_snakeToPascal(matchComponents[1])
 		const typeComponent = '"' + matchComponents[2] + '"'
 
-		commonTypes += `export type ${nameComponent} = ${typeComponent}\n\n`
+		if (nameComponent.includes('Locale')) return // FIXME
+
+		if (!commonTypes.includes(` ${nameComponent} `))
+			commonTypes += `export type ${nameComponent} = ${typeComponent}\n\n`
+
+		nameComponents.push(nameComponent)
+		allLines[lineNum] = allLines[lineNum].replace(
+			typeComponent,
+			nameComponent,
+		)
 	})
 
-	console.debug(commonTypes)
+	allLines.unshift(
+		`import { ${nameComponents.join(', ')} } from './common'\n`,
+	)
+	await fsPromises.writeFile(output + '/common.ts', commonTypes, 'utf8')
+	await fsPromises.writeFile(
+		output + '/index.d.ts',
+		allLines.join('\n'),
+		'utf8',
+	)
 }
 
 async function main() {
