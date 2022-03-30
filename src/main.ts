@@ -10,6 +10,7 @@ import rimraf from 'rimraf'
 import { Collection, RestContext, RouteLevel, TopLevel } from './types'
 
 const output = path.resolve(__dirname, '../dist')
+const moduleDeclaration = "declare module 'wp-json-types' {"
 
 const baseUrl = 'http://localhost:8080/wp-json'
 const baseEP = '/wp/v2'
@@ -159,7 +160,7 @@ async function compressFinal(output: string): Promise<string> {
 	console.debug('---')
 	console.debug('writing index.d.ts')
 
-	let final = "declare module 'wp-json-types' {"
+	let final = moduleDeclaration
 
 	for await (const file of viewContext)
 		final += await trimFile('./view/' + file)
@@ -194,66 +195,89 @@ async function deleteOutputDir(): Promise<void> {
 	})
 }
 
-// FIXME: needs to replace in all places/contexts
-async function extractCommonTypes(): Promise<void> {
-	const bundle = await fsPromises.readFile(
-		path.resolve(output, './index.d.ts'),
-	)
-	const allLines = bundle.toString().split('\n')
-	const interestingUnion = new RegExp(/([a-z_]+): "([a-z| "]+)"/)
-	const matched: { line: string; lineNum: number }[] = []
-	allLines.forEach((line, lineNum) => {
-		const match = line.match(interestingUnion)
-		if ((match?.length ?? []) > 1) matched.push({ line, lineNum })
-	})
-
-	let commonTypes = ''
-	const nameComponents: string[] = []
-
-	const reversedLines = [...allLines].reverse()
-	matched.forEach(({ line, lineNum }) => {
-		const parentObjectName =
-			[...reversedLines]
-				.slice(lineNum)
-				.find(
-					reversedLine =>
-						reversedLine.includes('{') &&
-						reversedLine.includes('Wp'),
-				)
-				?.replace('export ', '')
-				.replace('interface ', '')
-				.replaceAll(' ', '')
-				.replace('{', '')
-				.replace(':', '') ?? ''
-		const matchComponents = line.match(interestingUnion)!
-		const nameComponent =
-			_snakeToPascal(parentObjectName) +
-			_snakeToPascal(matchComponents[1])
-		const typeComponent = '"' + matchComponents[2] + '"'
-
-		if (nameComponent.includes('Locale')) return // FIXME
-
-		if (!commonTypes.includes(` ${nameComponent} `))
-			commonTypes += `export type ${nameComponent} = ${typeComponent}\n\n`
-
-		nameComponents.push(nameComponent)
-		allLines[lineNum] = allLines[lineNum].replace(
-			typeComponent,
-			nameComponent,
-		)
-	})
-
-	allLines.unshift(
-		`import { ${nameComponents.join(
-			', ',
-		)} } from './common'\n\nexport * from './common'\n`,
-	)
-	await fsPromises.writeFile(output + '/common.ts', commonTypes, 'utf8')
+async function writeCommonTypesToFile(
+	commonTypeExports: string[],
+): Promise<void> {
 	await fsPromises.writeFile(
-		output + '/index.d.ts',
-		allLines.join('\n'),
+		output + '/common.ts',
+		commonTypeExports.join('\n\n'),
 		'utf8',
 	)
+}
+
+// FIXME: needs to replace in all places/contexts
+async function extractCommonTypes(): Promise<void> {
+	/**
+	 * 1. determine current context (by namespace)
+	 * 2. find all of current context's interfaces
+	 * 3. track line number of current interface
+	 * 4. extract each union type: Wp[Context][Interface][Field] (e.g. WpViewPostStatus)
+	 * 5. extract each object type: Wp[Context][Interface][Field] (e.g. WpViewPostContent)
+	 */
+	const bundle = (
+		await fsPromises.readFile(path.resolve(output, './index.d.ts'))
+	).toString()
+
+	const interestingUnion = new RegExp(
+		/([a-z_]+)\??: \(?"([^;]+)"\)?[\w\s_|[\]]*;/,
+	)
+	const contextRegExp = new RegExp(/export namespace ([\w]+) {/g)
+
+	const contexts = Array.from(bundle.matchAll(contextRegExp)).map(
+		match => match[1],
+	)
+	contexts.unshift('ViewContext')
+
+	const commonTypeExports: { name: string; exportString: string }[] = []
+	const interfacesPerContext = bundle.split('export namespace')
+	interfacesPerContext.forEach((contextAsString, iteration) => {
+		const contextName = contexts[iteration]
+			.replace('ViewContext', '')
+			.replace('Context', '')
+		const currentContextLines = contextAsString.split('\n')
+		const replacedLines = currentContextLines.map(
+			(line, relativeLineNumber) => {
+				const matchedUnion = line.match(interestingUnion)
+				if (matchedUnion && matchedUnion.length > 2) {
+					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+					const parentObjectName = [...currentContextLines]
+						.slice(0, relativeLineNumber)
+						.reverse()
+						.find(line => line.includes('export interface'))!
+						.match(/export interface ([\w]+) {/)![1]
+						.replace('Wp', '')
+					const name = `Wp${contextName}${parentObjectName}${_snakeToPascal(
+						matchedUnion[1],
+					)}`
+					const unionType = matchedUnion[2]
+					commonTypeExports.push({
+						name,
+						exportString: `export type ${name} = "${unionType}"`,
+					})
+					return line.replace(`"${unionType}"`, name)
+				}
+				return line
+			},
+		)
+		interfacesPerContext[iteration] = replacedLines.join('\n')
+	})
+	await writeCommonTypesToFile(
+		commonTypeExports.map(({ exportString }) => exportString),
+	)
+
+	const importStatement = `import {${commonTypeExports
+		.map(({ name }) => name)
+		.join(', ')}} from './common'`
+	const newBundle = interfacesPerContext
+		.join('export namespace')
+		.replace(
+			moduleDeclaration,
+			importStatement +
+				'\n' +
+				moduleDeclaration +
+				"\n\texport * from './common'",
+		)
+	await fsPromises.writeFile(path.resolve(output, './index.d.ts'), newBundle)
 }
 
 async function main() {

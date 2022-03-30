@@ -1,6 +1,6 @@
 {
     "name": "wp-json-types",
-    "version": "0.0.1-rc2",
+    "version": "0.1.0",
     "description": "Typings for the WordPress REST API",
     "author": "dkress59 <28515387+dkress59@users.noreply.github.com>",
     "license": "MIT",
