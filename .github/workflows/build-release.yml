@@ -1,0 +1,26 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "docker/**"
+      - "src/**"
+      - "docker-compose.yml"
+      - "yarn.lock"
+      - ".github/workflows/build-release.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the stack
+        run: docker-compose up -d
+      - name: Wait for DB import
+        run: sleep 60
+      - name: Print localhost response (test)
+        run: curl -L localhost:8080
+        #run: curl --write-out '%{http_code}' --silent --output /dev/null localhost:8080
