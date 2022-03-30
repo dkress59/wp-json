@@ -8,7 +8,8 @@ on:
     paths:
       - "docker/**"
       - "src/**"
-      - ".github/workflows/build-release.yml"
+      - ".github/workflows/build.yml"
+      - ".github/workflows/release.yml"
       - ".yarnrc.yml"
       - "docker-compose.yml"
       - "yarn.lock"
@@ -46,7 +47,3 @@ jobs:
         with:
           name: wp-json-types
           path: ./dist
-      - name: Publish to NPM
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
