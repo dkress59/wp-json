@@ -91,7 +91,6 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 				console.debug(`writing ${fileName}`)
 				return fsPromises.writeFile(
 					path.resolve(output, `./${context}/${fileName}`),
-					//trimData(types.replaceAll('?: ', ': ')),
 					types.replaceAll('?: ', ': '),
 				)
 			} catch (error) {
@@ -128,7 +127,6 @@ async function endpointToDts({ uri, postSchema }: Collection) {
 			console.debug(`writing ${fileName}`)
 			return fsPromises.writeFile(
 				path.resolve(output, `./create/${fileName}`),
-				//trimData(postTypes),
 				postTypes,
 			)
 		} catch (error) {
@@ -205,15 +203,7 @@ async function writeCommonTypesToFile(
 	)
 }
 
-// FIXME: needs to replace in all places/contexts
 async function extractCommonTypes(): Promise<void> {
-	/**
-	 * 1. determine current context (by namespace)
-	 * 2. find all of current context's interfaces
-	 * 3. track line number of current interface
-	 * 4. extract each union type: Wp[Context][Interface][Field] (e.g. WpViewPostStatus)
-	 * 5. extract each object type: Wp[Context][Interface][Field] (e.g. WpViewPostContent)
-	 */
 	const bundle = (
 		await fsPromises.readFile(path.resolve(output, './index.d.ts'))
 	).toString()
@@ -310,12 +300,9 @@ async function main() {
 		})
 		.filter(route => !route.uri.endsWith(')'))
 		.filter(route => !route.uri.includes('<'))
-		// TODO: fix dts-generation for block- & pattern-directory endpoints
-		.filter(route => !route.uri.includes('directory'))
-		// TODO: fix dts-generation for search endpoint
 		.filter(route => !route.uri.includes('search'))
-		// TODO: fix dts-generation for theme endpoint
-		.filter(route => !route.uri.includes('theme'))
+		// FIXME: dts-generation for block- & pattern-directory endpoints
+		.filter(route => !route.uri.includes('directory'))
 
 	await Promise.all(endpoints.map(endpointToDts))
 
