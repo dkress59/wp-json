@@ -11,7 +11,7 @@
         "build": "ts-node src/main.ts && echo 'linting…' && yarn fix:script",
         "dev": "nodemon src/main.ts --watch src",
         "docker": "docker-compose up --build -d",
-        "docker:down": "docker-compose down && docker volume rm wp-rest-types_wordpress",
+        "docker:down": "docker-compose down && docker volume rm wp-json-types_wordpress",
         "check:script": "eslint dist src --ext .ts --fix-dry-run --report-unused-disable-directives",
         "fix:script": "eslint dist src --ext .ts --fix"
     },
