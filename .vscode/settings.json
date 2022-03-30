@@ -13,5 +13,9 @@
   "cSpell.words": [
     "deduplicated",
     "dtsgenerator"
-  ]
+  ],
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///home/dkress/Web/wp-json-types/.github/workflows/build.yml",
+    "https://json.schemastore.org/github-workflow.json": "file:///home/dkress/Web/wp-json-types/.github/workflows/release.yml"
+  }
 }
