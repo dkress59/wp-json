@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build
 
 on:
   push:
@@ -41,10 +41,12 @@ jobs:
         run: yarn
       - name: Generate the typings
         run: yarn build
-      - name: Zip dist (test)
-        run: zip -r wp-json-types.zip dist
       - name: Upload artifacts (test)
         uses: actions/upload-artifact@v2
         with:
           name: wp-json-types
-          path: ./*.zip
+          path: ./dist
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
